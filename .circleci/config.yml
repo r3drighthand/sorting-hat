@@ -3,59 +3,109 @@
 # Check https://circleci.com/docs/2.0/language-ruby/ for more details
 #
 version: 2
-jobs:
-  build:
-    docker:
-      # specify the version you desire here
-       - image: circleci/ruby:2.5.1-node-browsers
+  jobs:
+    build:
+      parallelism: 3
+      working_directory: ~/sorting-hat
 
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      - image: circleci/postgres:9.4
+      docker:
+        - image: circleci/ruby:2.5.1  # language image
+          environment:
+            BUNDLE_JOBS: 3
+            BUNDLE_RETRY: 3
+            BUNDLE_PATH: vendor/bundle
+            PGHOST: 127.0.0.1
+            PGUSER: circleci-demo-ruby
+            RAILS_ENV: test
+        - image: circleci/postgres:9.6.3  # service image
+          environment:
+            POSTGRES_USER: circleci-demo-ruby
+            POSTGRES_DB: sorting-hat
+            POSTGRES_PASSWORD: ""
 
-    working_directory: ~/sorting-hat
+      steps:
+        - checkout
 
-    steps:
-      - checkout
+        # Restore bundle cache
+        - restore_cache:
+            keys:
+              - rails-demo-bundle-v2-{{ checksum "Gemfile.lock" }}
+              - rails-demo-bundle-v2-
 
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "Gemfile.lock" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+        - run:
+            name: Bundle Install
+            command: bundle check || bundle install
 
-      - run:
-          name: install dependencies
-          command: |
-            bundle install --jobs=4 --retry=3 --path vendor/bundle
+        # Store bundle cache
+        - save_cache:
+            key: rails-demo-bundle-v2-{{ checksum "Gemfile.lock" }}
+            paths:
+              - vendor/bundle
 
-      - save_cache:
-          paths:
-            - ./vendor/bundle
-          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
+        # Database setup
+        - run:
+            name: Wait for DB
+            command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
-      # Database setup
-      - run: bundle exec rake db:create
-      - run: bundle exec rake db:schema:load
+        - run:
+            name: Database setup
+            command: bin/rails db:schema:load --trace
 
-      # run tests!
-      - run:
-          name: run tests
-          command: |
-            mkdir /tmp/test-results
-            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+        # Run rspec in parallel
+        - run: |
+            bundle exec rspec --profile 10 \
+                              --format RspecJunitFormatter \
+                              --out test_results/rspec.xml \
+                              --format progress \
+                              $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
 
-            bundle exec rspec --format progress \
-                            --format RspecJunitFormatter \
-                            --out /tmp/test-results/rspec.xml \
-                            --format progress \
-                            $TEST_FILES
+        # Save test results for timing analysis
+        - store_test_results:
+            path: test_results
 
-      # collect reports
-      - store_test_results:
-          path: /tmp/test-results
-      - store_artifacts:
-          path: /tmp/test-results
-          destination: test-results
+
+
+
+    # steps:
+    #   - checkout
+
+    #   # Download and cache dependencies
+    #   - restore_cache:
+    #       keys:
+    #       - v1-dependencies-{{ checksum "Gemfile.lock" }}
+    #       # fallback to using the latest cache if no exact match is found
+    #       - v1-dependencies-
+
+    #   - run:
+    #       name: install dependencies
+    #       command: |
+    #         bundle install --jobs=4 --retry=3 --path vendor/bundle
+
+    #   - save_cache:
+    #       paths:
+    #         - ./vendor/bundle
+    #       key: v1-dependencies-{{ checksum "Gemfile.lock" }}
+
+    #   # Database setup
+    #   - run: bundle exec rake db:create
+    #   - run: bundle exec rake db:schema:load
+
+    #   # run tests!
+    #   - run:
+    #       name: run tests
+    #       command: |
+    #         mkdir /tmp/test-results
+    #         TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+
+    #         bundle exec rspec --format progress \
+    #                         --format RspecJunitFormatter \
+    #                         --out /tmp/test-results/rspec.xml \
+    #                         --format progress \
+    #                         $TEST_FILES
+
+    #   # collect reports
+    #   - store_test_results:
+    #       path: /tmp/test-results
+    #   - store_artifacts:
+    #       path: /tmp/test-results
+    #       destination: test-results
