@@ -10,15 +10,15 @@ jobs:
     working_directory: ~/sorting-hat
     docker:
       - image: circleci/ruby:2.5.1
-      environment:
-        PGHOST: localhost
-        PGUSER: sorting-hat
-        RAILS_ENV: test
+        environment:
+          PGHOST: localhost
+          PGUSER: sorting-hat
+          RAILS_ENV: test
       - image: postgres:9.6.1
-        environement:
-          POSTGRES_USER: sorting-hat
-          POSTGRES_DB: sorting-hat_test
-          POSTGRES_PASSWORD: ""
+          environement:
+            POSTGRES_USER: sorting-hat
+            POSTGRES_DB: sorting-hat_test
+            POSTGRES_PASSWORD: ""
     steps:
       - checkout
 
