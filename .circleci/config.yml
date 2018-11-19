@@ -15,7 +15,7 @@ jobs:
           PGUSER: sorting-hat
           RAILS_ENV: test
       - image: postgres:9.6.1
-          environement:
+          environment:
             POSTGRES_USER: sorting-hat
             POSTGRES_DB: sorting-hat_test
             POSTGRES_PASSWORD: ""
