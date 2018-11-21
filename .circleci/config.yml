@@ -28,7 +28,9 @@ jobs:
       - run: bundle install
 
       # Setup the database
-      - run: bundle exec rake db:setup
+      - run: bundle exec rake db:create
+
+      - run: bundle exec rake db:migrate
 
       # Run the tests
       - run: bundle exec rspec
