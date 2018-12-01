@@ -25,9 +25,12 @@
 /test/version_tmp/
 /public
 
-/node_modules
+# Ignore node_modules
+node_modules/
+
 /yarn-error.log
 
 .DS_Store
 
+# Ignore Byebug command history file.
 .byebug_history
