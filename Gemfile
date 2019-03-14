@@ -33,6 +33,9 @@ gem 'jbuilder', '~> 2.5'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
+# Updates:
+gem 'actionview', '~> 5.2.2.1'
+
 gem 'dotenv-rails', groups: [:development, :test]
 # gem 'ibm_watson'
 
