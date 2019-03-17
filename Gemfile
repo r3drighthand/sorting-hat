@@ -36,12 +36,12 @@ gem 'jbuilder', '~> 2.5'
 # Sorting Hat
 gem 'slim'
 gem 'sorcery'
+gem 'ibm_watson'
 
 # Updates:
 gem 'actionview', '~> 5.2.2.1'
 
 gem 'dotenv-rails', groups: [:development, :test]
-# gem 'ibm_watson'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
