@@ -1,6 +1,18 @@
 # Sorting Hat
 
-The Sorting Hat seeks to replicate the same hat from the Harry Potter series by integrating with IBM Watson.
+Find out definitely into which [Hogwarts House](https://www.pottermore.com/news/discover-your-hogwarts-house-on-pottermore) you ought to be sorted. The Sorting Hat seeks to replicate the same hat from the Harry Potter series by integrating with IBM Watson to create an interactive assessment of your values, personality traits, and character. While loosely based on the [Sorting Hat Experience](https://my.pottermore.com/sorting) available on Pottermore, this Sorting Hat AI ignores the dumb questions like: 
+
+* "Dusk or Dawn?" 
+* "Forest or River?" 
+* "Heads or Tails?" 
+
+... along with the cryptic: 
+
+* "Four boxes ar eplaced in front of your, which do you choose?"
+* "You enter an enchanted garden. Which would you be most curious to examine first?"
+* "If you were attending Hogwarts, which pet would you choose to take with you?"
+
+... Because these questions have zero to do with what House you belong in.
 
 ## Authored by
 
