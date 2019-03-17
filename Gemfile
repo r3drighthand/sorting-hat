@@ -33,6 +33,10 @@ gem 'jbuilder', '~> 2.5'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
+# Sorting Hat
+gem 'slim'
+gem 'sorcery'
+
 # Updates:
 gem 'actionview', '~> 5.2.2.1'
 
